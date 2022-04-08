@@ -1,0 +1,32 @@
+{
+    "name": "api-jwt-auth-base",
+    "version": "0.0.1",
+    "description": "API base with JWT authentication",
+    "type": "module",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Madzahttr/api-jwt-auth-base.git"
+    },
+    "author": "Ethan Matten",
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/Madzahttr/api-jwt-auth-base/issues"
+    },
+    "homepage": "https://github.com/Madzahttr/api-jwt-auth-base#readme",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "express": "^5.0.0-beta.1",
+        "mariadb": "^3.0.0",
+        "sequelize": "^6.18.0"
+    },
+    "devDependencies": {
+        "eslint": "^8.12.0",
+        "sequelize-cli": "^6.4.1"
+    }
+}
