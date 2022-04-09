@@ -6,7 +6,7 @@ const app = express();
 config();
 const port = process.env.PORT || 8080;
 
-import * as main from './http/routes/main.js';
+import mainRouter from './http/routes/mainRouter.js';
 
 app.use(cors());
 app.use(express.json());
@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/', main);
+app.use('/', new mainRouter());
 
 app.listen(port, async() => {
 	try {
