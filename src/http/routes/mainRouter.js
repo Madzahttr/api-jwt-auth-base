@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import mainController from '../controllers/mainController.js';
+
 class mainRouter {
 	constructor() {
 		this.router = Router();

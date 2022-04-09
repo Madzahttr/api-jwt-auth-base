@@ -2,11 +2,21 @@ import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
 import { sequelize } from './models/index.js';
+import Logger from './util/logger.js';
+
+// middleware
+import errorMiddleware from './http/middleware/errorMiddleware.js';
+
+//routers
+import mainRouter from './http/routes/mainRouter.js';
+import authRouterv1 from './http/routes/v1/authRouter.js';
+
 const app = express();
 config();
-const port = process.env.PORT || 8080;
+const logger = new Logger(process.env.APP_NAME);
 
-import mainRouter from './http/routes/mainRouter.js';
+const appPort = process.env.APP_PORT || 8080;
+const appName = process.env.APP_NAME || 'app';
 
 app.use(cors());
 app.use(express.json());
@@ -16,16 +26,22 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/', new mainRouter());
-
-app.listen(port, async() => {
-	try {
-		await sequelize.authenticate();
-		console.log('Database Connected');
-	} catch (err) {
-		console.error('Unable to connect to the database:', err);
+await sequelize.authenticate().then(err => {
+	if(err) {
+		logger.error('Unable to connect to the database:', err);
 		process.exit(1);
 	}
+	logger.info('Database Connected');
 
-	console.log(`\nApp running on port ${port}`);
+	app.use('/', new mainRouter());
+	app.use('/v1/auth', new authRouterv1());
+
+	const error = new errorMiddleware();
+
+	app.use(error.notFound);
+	app.use(error.serverError);
+});
+
+app.listen(appPort, () => {
+	logger.info(`${appName} running on port ${appPort}`);
 });

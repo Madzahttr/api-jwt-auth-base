@@ -1,5 +1,7 @@
 'use strict';
 import { DataTypes } from 'sequelize';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { sequelize } from './index.js';
 import { Model } from 'sequelize';
 
@@ -19,7 +21,7 @@ User.init({
 		type: DataTypes.STRING,
 		primaryKey: true
 	},
-	username: {
+	userName: {
 		type: DataTypes.STRING
 	},
 	email: {
@@ -32,5 +34,25 @@ User.init({
 	sequelize,
 	modelName: 'User',
 });
+
+User.authenticate = async (username, password, callback) => {
+	const user = await User.findOne({ where: { username } });
+	
+	if(!user) {
+		callback('userNameInvalid', null);
+		return;
+	}
+
+	if(bcrypt.compareSync(password, user.password)) {
+		callback(null, user.authorize(user));
+		return;
+	}
+
+	callback('passwordInvalid', null);
+};
+
+User.prototype.authorize = user => {
+	return jwt.sign({ id: user.id }, process.env.APP_SECRET, { expiresIn: '7d' });
+};
 
 export default User;
